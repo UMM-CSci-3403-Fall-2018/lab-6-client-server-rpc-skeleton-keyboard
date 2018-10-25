@@ -11,11 +11,11 @@ import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
 
 public class ExchangeRateTest {
-    private static final String NICS_DUMMY_DATA_URL = "http://www.morris.umn.edu/~mcphee/ExchangeRateData/";
+    private static final String NICS_DUMMY_DATA_URL = "http://facultypages.morris.umn.edu/~mcphee/ExchangeRateData/";
     private static final double DELTA = 0.0001;
 
     @Test
-    public void checkUSD20091112() throws IOException, ParserConfigurationException, SAXException {
+// TODO Your code here    public void checkUSD20091112() throws IOException, ParserConfigurationException, SAXException {
         ExchangeRateReader xrReader = new ExchangeRateReader(NICS_DUMMY_DATA_URL);
         float rate = xrReader.getExchangeRate("USD", 2009, 11, 12);
         assertEquals(1.492200, rate, DELTA);
