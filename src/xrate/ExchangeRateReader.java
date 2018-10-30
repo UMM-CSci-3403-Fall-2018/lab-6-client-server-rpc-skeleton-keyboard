@@ -1,5 +1,8 @@
 package xrate;
 
+import com.google.gson.JsonParser;
+import com.google.gson.JsonObject;
+
 import java.io.*;
 import java.net.URL;
 import java.util.Properties;
@@ -10,6 +13,7 @@ import java.util.Properties;
 public class ExchangeRateReader {
 
     private String accessKey;
+    private String urlString;
 
     /**
      * Construct an exchange rate reader using the given base URL. All requests
@@ -29,7 +33,7 @@ public class ExchangeRateReader {
          * the two methods below. All you need to do here is store the
          * provided `baseURL` in a field so it will be accessible later.
          */
-         String urlString = baseURL;
+        urlString = baseURL;
 
 
         // TODO Your code here
@@ -86,16 +90,17 @@ public class ExchangeRateReader {
     public float getExchangeRate(String currencyCode, int year, int month, int day) throws IOException {
         String date = year + "-" + month + "-" + day; //  year append(-) month append(-) day;
         String dateUrl = urlString + date;
-        /* add the key to the url
-        call it urlString
-        */
-        URL url = new URL(urlString);
+        String urlFull = dateUrl + accessKey;
+        URL url = new URL(urlFull);
         InputStream inputStream = url.openStream();
         InputStreamReader in = new InputStreamReader(inputStream);
-        JsonParser moneyList = new JsonParser().parse(in).getAsJsonObject();
+        JsonObject moneyList = new JsonParser().parse(in).getAsJsonObject();
+        JsonObject rates = moneyList.get("rates").getAsJsonObject();
+        float result = rates.get(currencyCode).getAsFloat();
 
 
 
+        return result;
 
 
         throw new UnsupportedOperationException();
@@ -121,7 +126,15 @@ public class ExchangeRateReader {
     public float getExchangeRate(
             String fromCurrency, String toCurrency,
             int year, int month, int day) throws IOException {
-        // TODO Your code here
+              String date = year + "-" + month + "-" + day; //  year append(-) month append(-) day;
+              String dateUrl = urlString + date;
+              String urlFull = dateUrl + accessKey;
+              URL url = new URL(urlFull);
+              InputStream inputStream = url.openStream();
+              InputStreamReader in = new InputStreamReader(inputStream);
+              JsonParser moneyList = new JsonParser().parse(in).getAsJsonObject();
+
+
 
         // Remove the next line when you've implemented this method.
         throw new UnsupportedOperationException();
