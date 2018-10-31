@@ -23,9 +23,11 @@ public class ExchangeRateReader {
      * year, month, and day; the URL for 25 June 2010, for example, would be
      * http://api.finance.xaviermedia.com/api/2010/06/25.xml
      *
-     * @param baseURL
-     *            the base URL for requests
+     * @param baseURL the base URL for requests
      */
+
+
+
     public ExchangeRateReader(String baseURL) throws IOException {
         /*
          * DON'T DO MUCH HERE!
@@ -41,6 +43,8 @@ public class ExchangeRateReader {
         // Reads the access keys from `etc/access_keys.properties`
         readAccessKeys();
     }
+
+
 
     /**
      * This reads the `fixer_io` access key from `etc/access_keys.properties`
@@ -88,9 +92,23 @@ public class ExchangeRateReader {
      * @throws IOException if there are problems reading from the server
      */
     public float getExchangeRate(String currencyCode, int year, int month, int day) throws IOException {
-        String date = year + "-" + month + "-" + day; //  year append(-) month append(-) day;
+       String zeroMonth = null;
+       String zeroDay = null;
+
+
+        if(month < 10){
+            zeroMonth = "0" + month;
+        } else { zeroMonth = "" + month;}
+
+        if(day <10) {
+            zeroDay = "0" + day;
+        } else { zeroDay = "" + day;}
+
+
+
+        String date = year + "-" + zeroMonth + "-" + zeroDay;
         String dateUrl = urlString + date;
-        String urlFull = dateUrl + accessKey;
+        String urlFull = dateUrl + "?access_key=" + accessKey;
         URL url = new URL(urlFull);
         InputStream inputStream = url.openStream();
         InputStreamReader in = new InputStreamReader(inputStream);
@@ -103,7 +121,7 @@ public class ExchangeRateReader {
         return result;
 
 
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
     }
 
     /**
@@ -113,7 +131,7 @@ public class ExchangeRateReader {
      * @param fromCurrency
      *            the currency code we're exchanging *from*
      * @param toCurrency
-     *            the currency code we're exchanging *to*
+     *            the currency code we're exchanging *new String testingUrl = new String("data.fixer.io/api/");to*
      * @param year
      *            the year as a four digit integer
      * @param month
@@ -126,17 +144,36 @@ public class ExchangeRateReader {
     public float getExchangeRate(
             String fromCurrency, String toCurrency,
             int year, int month, int day) throws IOException {
-              String date = year + "-" + month + "-" + day; //  year append(-) month append(-) day;
-              String dateUrl = urlString + date;
-              String urlFull = dateUrl + accessKey;
-              URL url = new URL(urlFull);
-              InputStream inputStream = url.openStream();
-              InputStreamReader in = new InputStreamReader(inputStream);
-              JsonParser moneyList = new JsonParser().parse(in).getAsJsonObject();
+        String zeroMonth = null;
+        String zeroDay = null;
 
 
+        if(month < 10){
+            zeroMonth = "0" + month;
+        } else { zeroMonth = "" + month;}
+
+        if(day <10) {
+            zeroDay = "0" + day;
+        } else { zeroDay = "" + day;}
+
+
+
+        String date = year + "-" + zeroMonth + "-" + zeroDay;
+        String dateUrl = urlString + date;
+        String urlFull = dateUrl + "?access_key=" + accessKey;
+        URL url = new URL(urlFull);
+        InputStream inputStream = url.openStream();
+        InputStreamReader in = new InputStreamReader(inputStream);
+        JsonObject moneyList = new JsonParser().parse(in).getAsJsonObject();
+        JsonObject rates = moneyList.get("rates").getAsJsonObject();
+        float fromRate = rates.get(fromCurrency).getAsFloat();
+        float toRate = rates.get(toCurrency).getAsFloat();
+
+        float result = fromRate/toRate;
+
+        return result;
 
         // Remove the next line when you've implemented this method.
-        throw new UnsupportedOperationException();
+        //throw new UnsupportedOperationException();
     }
 }
